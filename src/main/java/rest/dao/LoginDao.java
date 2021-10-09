@@ -10,6 +10,7 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import rest.Beans.Login;
@@ -17,9 +18,12 @@ import rest.connection.MyConnection;
 
 @Component("loginDao")
 public class LoginDao {
+	
+	@Autowired
+	MyConnection myConnection;
 
 	public String loginUser(String userName, String userPassword) {
-		MyConnection myConnection = new MyConnection();
+//		MyConnection myConnection = new MyConnection();
 		Connection connection = myConnection.getConnection();
 		Login login=null;
 		String jsonString=null;

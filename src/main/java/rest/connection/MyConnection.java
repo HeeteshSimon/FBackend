@@ -6,6 +6,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+import org.springframework.stereotype.Component;
+
+@Component("myConnection")
 public class MyConnection {
 	public Connection getConnection() {
 		DataSource dataSource;

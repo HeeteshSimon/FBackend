@@ -14,25 +14,28 @@ import javax.naming.InitialContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import rest.Beans.Records;
+import rest.dao.MemberRecordsDao;
+
 @CrossOrigin(originPatterns = "*")
 @Controller
-public class MembersController {
+public class MemberRecordsController {
+	
+	@Autowired
+	MemberRecordsDao recordsDao;
+	
 	@GetMapping("/testsession")
 	@ResponseBody
 	public String Abc(HttpServletRequest request) {
@@ -44,109 +47,38 @@ public class MembersController {
 	@ResponseBody
 	public String getById(@RequestParam(defaultValue = "all") String uid,
 			@RequestParam(defaultValue = "monthly") String type) {
-		DataSource ds;
-		Connection con;
-		JsonObjectBuilder res = Json.createObjectBuilder();
-
-		ArrayList<String> id = new ArrayList<String>();
-		ArrayList<String> fname = new ArrayList<String>();
-		ArrayList<String> lname = new ArrayList<String>();
-		ArrayList<String> amount = new ArrayList<String>();
-		ArrayList<String> date = new ArrayList<String>();
-
-		GsonBuilder gsonBuilder = new GsonBuilder();
-		Gson gson = gsonBuilder.create();
-		try {
-			Context ic = new InitialContext();
-			ds = (DataSource) ic.lookup("java:comp/env/jdbc/jit");
-			con = ds.getConnection();
-			PreparedStatement pstmt = null;
-			String query = null;
-			if (uid.equals("all"))
-				query = "SELECT r.record_id, u.firstname, u.lastname, r.amount, r.date_of_pay FROM Records r INNER JOIN Users u ON u.user_id=r.user_id ORDER BY r.date_of_pay DESC;";
-			else if (type.equalsIgnoreCase("yearly"))
-				query = "select u.user_id,u.firstname,u.lastname,sum(r.amount),year(date_of_pay) "
-						+ "from Records r inner join Users u on u.user_id=r.user_id " + "where u.user_id=" + uid
-						+ " group by r.user_id,year(r.date_of_pay) " + "order by r.date_of_pay desc;";
-			else
-				query = "SELECT r.record_id, u.firstname, u.lastname, r.amount, r.date_of_pay FROM Records r "
-						+ "INNER JOIN Users u ON u.user_id=r.user_id WHERE u.user_id=" + uid
-						+ " ORDER BY r.date_of_pay DESC;";
-			pstmt = con.prepareStatement(query);
-//			pstmt.setInt(1, Integer.parseInt(uid));
-			ResultSet result = pstmt.executeQuery(query);
-//			System.out.println(result);
-			while (result.next()) {
-				id.add(result.getString(1));
-				fname.add(result.getString("firstname"));
-				lname.add(result.getString("lastname"));
-				amount.add(result.getString(4));
-				date.add(result.getString(5));
-			}
-			con.close();
-			String idJson = gson.toJson(id);
-			String fnameJson = gson.toJson(fname);
-			String lnameJson = gson.toJson(lname);
-			String amountJson = gson.toJson(amount);
-			String dateJson = gson.toJson(date);
-			if (result != null)
-				res = Json.createObjectBuilder().add("status", true).add("message", "success").add("fname", fnameJson)
-						.add("lname", lnameJson).add("id", idJson).add("amount", amountJson).add("date", dateJson);
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		JsonObject jsonObject = res.build();
-		String jsonString;
-		StringWriter writer = new StringWriter();
-		Json.createWriter(writer).write(jsonObject);
-		jsonString = writer.toString();
-		return jsonString;
+		
+		String result=recordsDao.getById(uid, type);
+		return result;
+		
+		
+		
 	}
 
 	@RequestMapping(value = "/addUserRecord")
 	@ResponseBody
-	public String addUserRecord(@RequestParam String uid, @RequestParam String amount, @RequestParam String date) {
+	public String addUserRecord(@RequestParam String flatNumber, @RequestParam String amount, @RequestParam String dateOfPay,@RequestParam String modeOfPayment,@RequestParam String paymentReference) {
 //		String uid = formData.getFirst("uid");
 //		String amount = formData.getFirst("amount");
 //		String date = formData.getFirst("date");
-		DataSource ds;
-		Connection con;
-		try {
-			Context ic = new InitialContext();
-			ds = (DataSource) ic.lookup("java:comp/env/jdbc/jit");
-			con = ds.getConnection();
-			PreparedStatement pstmt = null;
-			String query = null;
-			query = "INSERT INTO `records` (`user_id`, `amount`, `date_of_pay`) VALUES (?, ?, ?);";
-			pstmt = con.prepareStatement(query);
-
-			pstmt.setString(1, uid);
-			pstmt.setString(2, amount);
-			pstmt.setString(3, date);
-//			System.out.println(pstmt);
-			int result = pstmt.executeUpdate();
-			con.close();
-			if (result > 0) {
-				return "success";
-			} else {
-				return "failed";
-			}
-
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-
-		return "error";
+		
+		Records records=new Records(Integer.parseInt(flatNumber),Float.parseFloat(amount),dateOfPay,modeOfPayment,paymentReference);
+		String result=recordsDao.addRecord(records);
+		
+		return result;
 	}
 
 	@RequestMapping(value = "/updateUserRecord")
 	@ResponseBody
-	public String updateUserRecord(@RequestParam String rid, @RequestParam String amount, @RequestParam String date) {
+	public String updateUserRecord(@RequestParam String recordId, @RequestParam String amount, @RequestParam String dateOfPay,@RequestParam String modeOfPayment,@RequestParam String paymentReference) {
 //		String rid = formData.getFirst("rid");
 ////		String uid = formData.getFirst("uid");
 //		String amount = formData.getFirst("amount");
 //		String date = formData.getFirst("date");
+		
+		Records records=new Records(Integer.parseInt(recordId) ,Float.parseFloat(amount),dateOfPay,modeOfPayment,paymentReference);
+
+		
 		DataSource ds;
 		Connection con;
 		try {

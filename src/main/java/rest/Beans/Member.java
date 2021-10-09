@@ -1,5 +1,6 @@
 package rest.Beans;
 
+
 public class Member {
 	
 	private int flatNumber;
@@ -12,6 +13,9 @@ public class Member {
 	private int memberCount;
 	private String membershipJoin ;
 	private String membershipEnd ;
+	
+	
+	
 	public Member(int flatNumber, String userName, String firstName, String lastName, String userPassword,
 			String emailId, String userRole, int memberCount, String membershipJoin, String membershipEnd) {
 		super();
@@ -26,6 +30,24 @@ public class Member {
 		this.membershipJoin = membershipJoin;
 		this.membershipEnd = membershipEnd;
 	}
+	
+	public Member(int flatNumber, String userName, String firstName, String lastName, String userPassword,
+			String emailId, int memberCount, String membershipJoin, String membershipEnd) {
+		super();
+		this.flatNumber = flatNumber;
+		this.userName = userName;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.userPassword = userPassword;
+		this.emailId = emailId;
+		this.memberCount = memberCount;
+		this.membershipJoin = membershipJoin;
+		this.membershipEnd = membershipEnd;
+	}
+	
+	
+	
+
 	public int getFlatNumber() {
 		return flatNumber;
 	}

@@ -1,20 +1,24 @@
 package rest.Beans;
 
-public class Records {
+public class UserPaymentRecords {
 	private int recordId;
 	private int flatNumber;
 	private float amount;
+	private String firstName;
+	private String lastName;
 	private String dateOfPay;
 	private String modeOfPayment;
 	private String paymentReference;
 	
 	
+	
 
-	public Records() {
+	
+	public UserPaymentRecords() {
 		super();
 	}
 
-	public Records(int flatNumber, float amount, String dateOfPay, String modeOfPayment, String paymentReference) {
+	public UserPaymentRecords(int flatNumber, float amount, String dateOfPay, String modeOfPayment, String paymentReference) {
 		super();
 		this.flatNumber = flatNumber;
 		this.amount = amount;
@@ -23,7 +27,7 @@ public class Records {
 		this.paymentReference = paymentReference;
 	}
 
-	public Records(int recordId,int flatNumber, float amount, String dateOfPay, String modeOfPayment, String paymentReference) {
+	public UserPaymentRecords(int recordId,int flatNumber, float amount, String dateOfPay, String modeOfPayment, String paymentReference) {
 		super();
 		this.recordId = recordId;
 		this.flatNumber = flatNumber;
@@ -32,6 +36,17 @@ public class Records {
 		this.modeOfPayment = modeOfPayment;
 		this.paymentReference = paymentReference;
 	}
+	
+	public UserPaymentRecords(int recordId,int flatNumber, String modeOfPayment, String paymentReference, float amount, String firstName, String lastName, String date) {
+        this.flatNumber = flatNumber;
+        this.modeOfPayment = modeOfPayment;
+        this.paymentReference = paymentReference;
+        this.amount = amount;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateOfPay = date;
+        this.recordId =recordId;
+    }
 
 	public int getRecordId() {
 		return recordId;
@@ -59,6 +74,23 @@ public class Records {
 
 	public String getDateOfPay() {
 		return dateOfPay;
+	}
+	
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public void setDateOfPay(String dateOfPay) {

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context docBase="${catalina.home}/webapp/DAO_CTX_1"
          privileged="true" antiResourceLocking="false" antiJARLocking="false"
-         path="/"
          >
  
   <Resource name="jdbc/jit"

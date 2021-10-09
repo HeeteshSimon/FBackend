@@ -1,3 +1,5 @@
+//http://localhost:9090/sqlartifact/addUserRecord?flatNumber=102&amount=5000&dateOfPay=2021-05-01&modeOfPayment=Online&paymentReference=49494
+
 package rest.dao;
 
 import java.io.StringWriter;
@@ -97,14 +99,14 @@ public class MemberRecordsDao {
 			
 			PreparedStatement pstmt = null;
 			String query = null;
-			query = "INSERT INTO `records` (`flatNumber`, `amount`, `dateOfPay`,`modeOfPayment`,`paymentReferences`) VALUES (?,?,?,?,?);";
+			query = "INSERT INTO `records` (`flatNumber`, `amount`, `dateOfPay`,`modeOfPayment`,`paymentReference`) VALUES (?,?,?,?,?);";
 			pstmt = connection.prepareStatement(query);
 
 			pstmt.setInt(1, records.getFlatNumber());
 			pstmt.setFloat(2, records.getAmount());
 			pstmt.setString(3, records.getDateOfPay());
-			pstmt.setString(3, records.getModeOfPayment());
-			pstmt.setString(3, records.getPaymentReference());
+			pstmt.setString(4, records.getModeOfPayment());
+			pstmt.setString(5, records.getPaymentReference());
 //			System.out.println(pstmt);
 			int result = pstmt.executeUpdate();
 			connection.close();

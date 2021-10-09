@@ -7,18 +7,25 @@ public class Records {
 	private String dateOfPay;
 	private String modeOfPayment;
 	private String paymentReference;
+	
+	
 
-	public Records(int recordId, float amount, String dateOfPay, String modeOfPayment, String paymentReference) {
+	public Records() {
 		super();
-		this.recordId = recordId;
+	}
+
+	public Records(int flatNumber, float amount, String dateOfPay, String modeOfPayment, String paymentReference) {
+		super();
+		this.flatNumber = flatNumber;
 		this.amount = amount;
 		this.dateOfPay = dateOfPay;
 		this.modeOfPayment = modeOfPayment;
 		this.paymentReference = paymentReference;
 	}
 
-	public Records(int flatNumber, float amount, String dateOfPay, String modeOfPayment, String paymentReference) {
+	public Records(int recordId,int flatNumber, float amount, String dateOfPay, String modeOfPayment, String paymentReference) {
 		super();
+		this.recordId = recordId;
 		this.flatNumber = flatNumber;
 		this.amount = amount;
 		this.dateOfPay = dateOfPay;

@@ -76,6 +76,7 @@ public class MemberRecordsController {
 //		String amount = formData.getFirst("amount");
 //		String date = formData.getFirst("date");
 		
+		
 		Records records=new Records(Integer.parseInt(recordId) ,Float.parseFloat(amount),dateOfPay,modeOfPayment,paymentReference);
 
 		

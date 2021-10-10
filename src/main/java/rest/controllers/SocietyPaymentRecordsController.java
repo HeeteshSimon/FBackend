@@ -24,7 +24,7 @@ public class SocietyPaymentRecordsController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/addSocietyRecord")
+	@RequestMapping(value = "/addSocietyRecord",produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public String addSocietyRecord(@RequestParam String expenseType, @RequestParam String amount, @RequestParam String dateOfPay,@RequestParam String modeOfPayment,@RequestParam String expenseDescription,@RequestParam String paymentReference) {
 		

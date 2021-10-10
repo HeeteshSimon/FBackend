@@ -15,6 +15,10 @@ public class Member {
 	private String membershipEnd ;
 	
 	
+	public Member() {
+		super();
+	}
+	
 	
 	public Member(int flatNumber, String userName, String firstName, String lastName, String userPassword,
 			String emailId, String userRole, int memberCount, String membershipJoin, String membershipEnd) {

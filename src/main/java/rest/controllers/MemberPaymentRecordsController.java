@@ -28,20 +28,25 @@ public class MemberPaymentRecordsController {
 		String role = (String) request.getSession().getAttribute("role");
 		return role;
 	}
-
-	@RequestMapping(value = "/getUserRecords", produces = MediaType.APPLICATION_JSON_VALUE)
+	
+	@RequestMapping(value = "/getAllRecords",produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public String getById(@RequestParam(defaultValue = "all") String flatNumber,
-			@RequestParam(defaultValue = "monthly") String type) {
-		
-		String result=recordsDao.getRecords(flatNumber, type);
+	public String getAllRecords() {
+           // System.out.println(flatNumber+" "+type);
+		String result=recordsDao.getAllRecords();
 		return result;
-		
-		
-		
+	}
+	
+
+	@RequestMapping(value = "/getRecords",produces = MediaType.APPLICATION_JSON_VALUE)
+	@ResponseBody
+	public String loginUser(HttpServletRequest request,@RequestParam String flatNumber,@RequestParam String type) {
+           // System.out.println(flatNumber+" "+type);
+		String result=recordsDao.getRecords(flatNumber,type);
+		return result;
 	}
 
-	@RequestMapping(value = "/addUserRecord")
+	@RequestMapping(value = "/addUserRecord",produces = MediaType.APPLICATION_JSON_VALUE )
 	@ResponseBody
 	public String addUserRecord(@RequestParam String flatNumber, @RequestParam String amount, @RequestParam String dateOfPay,@RequestParam String modeOfPayment,@RequestParam String paymentReference) {
 //		String uid = formData.getFirst("uid");
@@ -54,7 +59,7 @@ public class MemberPaymentRecordsController {
 		return result;
 	}
 
-	@RequestMapping(value = "/updateUserRecord")
+	@RequestMapping(value = "/updateUserRecord", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public String updateUserRecord(@RequestParam String recordId,@RequestParam String flatNumber, @RequestParam String amount, @RequestParam String dateOfPay,@RequestParam String modeOfPayment,@RequestParam String paymentReference) {
 //		String rid = formData.getFirst("rid");
@@ -69,7 +74,7 @@ public class MemberPaymentRecordsController {
 		return result;
 	}
 
-	@RequestMapping(value = "/deleteUserRecord")
+	@RequestMapping(value = "/deleteUserRecord",produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public String deleteUserRecord(@RequestParam String recordId) {
 		

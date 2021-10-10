@@ -1,6 +1,13 @@
-//http://localhost:9090/sqlartifact/mem/add?username=sanjay&firstname=sanjay&lastname=prabhu&password=chinna&email=psanjay@gmail.com&role=member
+//addUser
+//http://localhost:9090/sqlartifact/add?flatNumber=203&userName=aaa&firstName=bbb&lastName=ccc&userPassword=ddd&emailId=eee@gmail.com&userRole=admin&memberCount=99&membershipJoin=2018-01-01&membershipEnd=2029-01-01
+
+//updateUser
+//http://localhost:9090/sqlartifact/update/202?userName=aaa&firstName=bbb&lastName=ccc&userPassword=ddd&emailId=eee@gmail.com&memberCount=99&membershipJoin=2018-01-01&membershipEnd=2029-01-01
 
 package rest.controllers;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -20,55 +27,58 @@ public class MemberDetailsController {
 
 	@Autowired
 	MemberDetailsDao memberDao;
+	
+	public static String encrypt(String pass){
+        String password = pass;
+        
+        String encryptedpassword = null;  
+        try   
+        {  
+        
+            MessageDigest m = MessageDigest.getInstance("SHA-256");  
+            
+            m.update(password.getBytes());  
+            
+            byte[] bytes = m.digest();  
+            
+            
+            StringBuilder s = new StringBuilder();  
+            for(int i=0; i< bytes.length ;i++)  
+            {  
+                s.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));  
+            }  
+            
+            
+            encryptedpassword = s.toString();  
+        }   
+        catch (NoSuchAlgorithmException e)   
+        {  
+            e.printStackTrace();  
+        }  
+        
+    
+        System.out.println("Plain-text password: " + password);  
+        System.out.println("Encrypted password using SHA: " + encryptedpassword);  
+        return encryptedpassword;
+    }
 
-//	@RequestMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
-//	public String addMember(@RequestParam String uname, @RequestParam String fname,@RequestParam String lname, @RequestParam String password, @RequestParam String email) {
-////		String uname = formData.getFirst("username");
-////		String fname = formData.getFirst("firstname");
-////		String lname = formData.getFirst("lastname");
-////		String pwd = formData.getFirst("password");
-////		String email = formData.getFirst("email");
-//
-//		DataSource ds;
-//		Connection con;
-//		JsonObjectBuilder res = Json.createObjectBuilder();
-//		try {
-//			Context ic = new InitialContext();
-//			ds = (DataSource) ic.lookup("java:comp/env/jdbc/jit");
-//			con = ds.getConnection();
-//			PreparedStatement pstmt = null;
-//			String query = null;
-//			query = "INSERT INTO Users(`username`, `firstname`, `lastname`, `password`,`email`,`role`) VALUES(?, ?, ?, ?,?, 'member')";
-//			pstmt = con.prepareStatement(query);
-////	         pstmt.setInt(1, Integer.parseInt(userId));
-//			pstmt.setString(1, uname);
-//			pstmt.setString(2, fname);
-//			pstmt.setString(3, lname);
-//			pstmt.setString(4, password);
-//			pstmt.setString(5, email);
-//			int result = pstmt.executeUpdate();
-//			System.out.println(result);
-//			if (result > 0) {
-//				con.close();
-//				res = Json.createObjectBuilder().add("status", true).add("message", "success");
-////	        	 return "{status: true, message: success, batchId: "+batchMapped+"}";
-//			} else {
-//				con.close();
-//				res = Json.createObjectBuilder().add("status", false).add("message", "error");
-////	        	 return "{status: true, message: batch_id_not_mapped, batchId: not mapped}";
-//			}
-//
-//		} catch (Exception e) {
-//			System.out.println(e.getMessage());
-//		}
-//		JsonObject jsonObject = res.build();
-//		String jsonString;
-//		StringWriter writer = new StringWriter();
-//		Json.createWriter(writer).write(jsonObject);
-//		jsonString = writer.toString();
-//		return jsonString;
-//
-//	}
+	@RequestMapping(value = "/add", produces = MediaType.APPLICATION_JSON_VALUE)
+	public String addMember(@RequestParam String flatNumber, @RequestParam("userName") String userName,
+			@RequestParam("firstName") String firstName, @RequestParam("lastName") String lastName,
+			@RequestParam("userPassword") String userPassword, @RequestParam("emailId") String email,
+			@RequestParam("userRole") String userRole, @RequestParam("memberCount") String memberCount,
+			@RequestParam("membershipJoin") String membershipJoin,
+			@RequestParam("membershipEnd") String membershipEnd) {
+		
+
+		Member member = new Member(Integer.parseInt(flatNumber), userName, firstName, lastName, encrypt(userPassword), email,
+				userRole, Integer.parseInt(memberCount), membershipJoin, membershipEnd);
+		String result = memberDao.add(member);
+		return result;
+
+	}
+	
+	
 
 	@RequestMapping(value = "/get", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
@@ -96,7 +106,8 @@ public class MemberDetailsController {
 			@RequestParam("memberCount") String memberCount, @RequestParam("membershipJoin") String membershipJoin,
 			@RequestParam("membershipEnd") String membershipEnd) {
 
-		Member member = new Member(Integer.parseInt(flatNumber), userName, firstName, lastName, userPassword, email,Integer.parseInt(memberCount), membershipJoin, membershipEnd);
+		Member member = new Member(Integer.parseInt(flatNumber), userName, firstName, lastName, userPassword, email,
+				Integer.parseInt(memberCount), membershipJoin, membershipEnd);
 		String result = memberDao.update(member);
 		return result;
 	}

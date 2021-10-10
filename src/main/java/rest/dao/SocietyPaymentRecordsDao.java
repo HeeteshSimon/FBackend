@@ -22,7 +22,7 @@ import rest.connection.MyConnection;
 public class SocietyPaymentRecordsDao {
 	
 	@Autowired
-	MyConnection myConnection;
+	MyConnection myConnection=new MyConnection() ;
 	
 	public String getRecords(String type) {
 		
@@ -148,7 +148,9 @@ public class SocietyPaymentRecordsDao {
 	
 	public String addRecord(SocietyPaymentRecords societyPaymentRecords) {
 		Connection connection = myConnection.getConnection();
-
+		String jsonString = null;
+		JsonObjectBuilder res = Json.createObjectBuilder();
+		
 		
 		try {
 			
@@ -167,15 +169,21 @@ public class SocietyPaymentRecordsDao {
 			int result = pstmt.executeUpdate();
 			connection.close();
 			if (result > 0) {
-				return "success";
+				res = Json.createObjectBuilder().add("status", true).add("message", "success");
+
 			} else {
-				return "failed";
+				res = Json.createObjectBuilder().add("status", false).add("message", "error");
+
 			}
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
 
-		return "error";
+		JsonObject jsonObject = res.build();
+		StringWriter writer = new StringWriter();
+		Json.createWriter(writer).write(jsonObject);
+		jsonString = writer.toString();
+		return jsonString;
 	}
 }

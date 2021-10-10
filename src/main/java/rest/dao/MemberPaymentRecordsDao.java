@@ -27,6 +27,69 @@ public class MemberPaymentRecordsDao {
 	
 	@Autowired
 	MyConnection myConnection;
+	
+	public String getAllRecords() {
+		Connection connection = myConnection.getConnection();
+		ArrayList<UserPaymentRecords> userRecords = new ArrayList<UserPaymentRecords>();
+		String jsonString = "";
+		JsonObjectBuilder res = Json.createObjectBuilder();
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		Gson gson = gsonBuilder.create();
+		
+		if (connection != null) {
+			
+			try {
+				PreparedStatement pstmt = null;
+				String query = null;
+				query = "Select * FROM Records";
+				pstmt = connection.prepareStatement(query);
+//					pstmt.setString(1, username);
+//					pstmt.setString(2, password);
+				ResultSet result = pstmt.executeQuery(query);
+				while (result.next()) {
+					UserPaymentRecords userPaymentRecords = new UserPaymentRecords();
+					userPaymentRecords.setRecordId(result.getInt(1));
+					userPaymentRecords.setFlatNumber(result.getInt(2));
+					userPaymentRecords.setAmount(result.getFloat(3));
+					userPaymentRecords.setDateOfPay(result.getString(4));
+					userPaymentRecords.setModeOfPayment(result.getString(5));
+					userPaymentRecords.setPaymentReference(result.getString(6));
+					userRecords.add(userPaymentRecords);
+
+				}
+				connection.close();
+
+			}
+
+			catch (SQLException e) {
+				e.printStackTrace();
+
+			}
+
+//				Login login=loginDao.setLoginUser(username, password);
+			if (userRecords.size() > 0) {
+				// request.getSession().setAttribute("role",login.getUserRole() );
+				String recordsJson = gson.toJson(userRecords);
+				res.add("records", recordsJson);
+//					return "success";
+			} else {
+				res.add("records", "no records found");
+//					return "failed";
+			}
+
+			JsonObject jsonObject = res.build();
+
+			StringWriter writer = new StringWriter();
+			Json.createWriter(writer).write(jsonObject);
+			jsonString = writer.toString();
+
+		}
+		return jsonString;
+		
+	}
+	
+	
+	
 	public String getRecords(String flatNumber, String type) {
 		
 		Connection connection = myConnection.getConnection();
@@ -144,7 +207,10 @@ public class MemberPaymentRecordsDao {
 
 	public String addRecord(UserPaymentRecords records) {
 		Connection connection = myConnection.getConnection();
+		String jsonString = null;
+		JsonObjectBuilder res = Json.createObjectBuilder();
 
+		
 		try {
 
 			PreparedStatement pstmt = null;
@@ -161,16 +227,22 @@ public class MemberPaymentRecordsDao {
 			int result = pstmt.executeUpdate();
 			connection.close();
 			if (result > 0) {
-				return "success";
+				res = Json.createObjectBuilder().add("status", true).add("message", "success");
+
 			} else {
-				return "failed";
+				res = Json.createObjectBuilder().add("status", false).add("message", "failure");
+
 			}
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+		JsonObject jsonObject = res.build();
+		StringWriter writer = new StringWriter();
+		Json.createWriter(writer).write(jsonObject);
+		jsonString = writer.toString();
+		return jsonString;
 
-		return "error";
 	}
 
 	public String updateRecord(UserPaymentRecords record) {
@@ -179,6 +251,9 @@ public class MemberPaymentRecordsDao {
 //		String amount = formData.getFirst("amount");
 //		String date = formData.getFirst("date");
 		Connection connection = myConnection.getConnection();
+		String jsonString = null;
+		JsonObjectBuilder res = Json.createObjectBuilder();
+
 		try {
 			
 			PreparedStatement pstmt = null;
@@ -195,21 +270,28 @@ public class MemberPaymentRecordsDao {
 			int result = pstmt.executeUpdate();
 			connection.close();
 			if (result > 0) {
-				return "success";
+				res = Json.createObjectBuilder().add("status", true).add("message", "success");
+
 			} else {
-				return "failed";
+				res = Json.createObjectBuilder().add("status", false).add("message", "failure");
 			}
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
+		JsonObject jsonObject = res.build();
+		StringWriter writer = new StringWriter();
+		Json.createWriter(writer).write(jsonObject);
+		jsonString = writer.toString();
+		return jsonString;
 
-		return "error";
 	}
 	
 public String deleteRecord(String rid) {
 		
 	Connection connection = myConnection.getConnection();
+	String jsonString = null;
+	JsonObjectBuilder res = Json.createObjectBuilder();
 
 		try {
 			
@@ -221,14 +303,19 @@ public String deleteRecord(String rid) {
 			int result = pstmt.executeUpdate();
 			connection.close();
 			if (result > 0) {
-				return "success";
+				res = Json.createObjectBuilder().add("status", true).add("message", "success");
 			} else {
-				return "failed";
+				res = Json.createObjectBuilder().add("status", false).add("message", "error");
+
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
-		return "error";
+		JsonObject jsonObject = res.build();
+		StringWriter writer = new StringWriter();
+		Json.createWriter(writer).write(jsonObject);
+		jsonString = writer.toString();
+		return jsonString;
 	}
 
 }

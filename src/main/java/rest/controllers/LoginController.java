@@ -29,11 +29,4 @@ public class LoginController {
 		
 	}
 
-//	@RequestMapping(value = "/logout")
-//	@ResponseBody
-//	public String logoutUser(HttpServletRequest request) {
-//		request.getSession().setAttribute("role", "");
-//		return "logout successful";
-//	}
-
 }

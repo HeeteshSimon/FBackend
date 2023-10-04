@@ -71,8 +71,6 @@ public class LoginDao {
 				String query = null;
 				query = "SELECT userRole,flatNumber FROM Users WHERE userName='"+userName+"' and userPassword='"+userPassword+"';";
 				pstmt = connection.prepareStatement(query);
-//				pstmt.setString(1, username);
-//				pstmt.setString(2, password);
 				ResultSet result = pstmt.executeQuery(query);
 				if (result.next()) {
 					 login = new Login(userName, userPassword, result.getString(1), result.getString(2));
@@ -91,15 +89,13 @@ public class LoginDao {
 			}
 			
 			
-//			Login login=loginDao.setLoginUser(username, password);
+
 			if (login!=null) {
-				//request.getSession().setAttribute("role",login.getUserRole() );
 				res.add("role", login.getUserRole())
 				.add("flatNumber", login.getFlatNumber());
-//				return "success";
+
 			} else {
 				res.add("role", "");
-//				return "failed";
 			}
 			
 			JsonObject jsonObject = res.build();
